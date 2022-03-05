@@ -14,13 +14,13 @@ from sklearn import preprocessing
 from kmodes.kmodes import KModes
 
 #Load our clean dataset
-dataset = pd.read_csv('dataset_processed.csv')
+dataset = pd.read_csv('datasets/dataset_processed.csv')
 
 #Drop the unlabeled first column
 dataset = dataset.iloc[: , 1:]
 
 #Convert our bool (active) column into a categorical feature
-dataset['active'] = dataset['active'].astype('object')
+#dataset['active'] = dataset['active'].astype('object')
                     
 print(dataset.columns)
 print(dataset.info())
@@ -57,28 +57,30 @@ plt.plot(y,cost)
 
 plt.savefig('kmodes.png', format="png")
 
-#Looks like K - 2 is the best
-km_cao = KModes(n_clusters=2, init = "Cao", n_init = 1, verbose=1)
+#Looks like K - 3 is the best
+km_cao = KModes(n_clusters=3, init = "Cao", n_init = 1, verbose=1)
 fitClusters_cao = km_cao.fit_predict(dataset)
 
 #Combine cluster labels with the original set
 dataset = dataset_copy.reset_index()
 
 clustersDf = pd.DataFrame(fitClusters_cao)
-clustersDf.columns = ['cluster_predicted']
+clustersDf.columns = ['style_class']
 combinedDf = pd.concat([dataset, clustersDf], axis = 1).reset_index()
 combinedDf = combinedDf.drop(['index', 'level_0'], axis = 1)
 
 print(combinedDf.head())
 
+combinedDf.to_csv('datasets/kmodes_labeled_combined.csv')
 #Identify each cluster
-cluster_0 = combinedDf[combinedDf['cluster_predicted'] == 0]
-cluster_1 = combinedDf[combinedDf['cluster_predicted'] == 1]
+cluster_0 = combinedDf[combinedDf['style_class'] == 0]
+cluster_1 = combinedDf[combinedDf['style_class'] == 1]
 
 print(cluster_0.info())
 print(cluster_1.info())
 
 #Plot for comparing the samples per cluster
-plt.subplots(figsize = (15,5))
-sns.countplot(x=combinedDf['brand'],order=combinedDf['brand'].value_counts().index,hue=combinedDf['cluster_predicted'])
-plt.savefig('clusters.png', format="png")
+#plt.subplots(figsize = (15,5))
+#sns.countplot(x=combinedDf['heading1'],order=combinedDf['heading1'].value_counts().index,hue=combinedDf['cluster_predicted'])
+#plt.savefig('clusters.png', format="png")
+

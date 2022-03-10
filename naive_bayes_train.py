@@ -2,7 +2,7 @@ import h2o
 from h2o.estimators.naive_bayes import H2ONaiveBayesEstimator
 
 h2o.init(nthreads = -1, max_mem_size = 8)
-data_csv = "datasets/dataset_dresses_processed.csv" 
+data_csv = "datasets/dataset_dresses_labeled_processed.csv" 
 
 data = h2o.import_file(data_csv)
 

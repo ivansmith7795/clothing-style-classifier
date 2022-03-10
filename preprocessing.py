@@ -14,7 +14,7 @@ import statsmodels.api as sm
 analysis_name = "Clothing Type Classifier"
 
 #Import into pandas
-dataset = pd.read_csv('datasets/dataset_dresses_labeled.csv')
+dataset = pd.read_csv('datasets/dataset_dresses_unlabeled.csv')
 
 #Drop irrelevant columns
 #dataset = dataset.drop("scrape_date", axis=1)
@@ -33,4 +33,4 @@ dataset = dataset.dropna(how='all', axis=1)
 
 print(dataset.head())
 
-dataset.to_csv('datasets/dataset_dresses_processed.csv')
+dataset.to_csv('datasets/dataset_dresses_unlabeled_processed.csv')

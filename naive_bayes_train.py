@@ -38,7 +38,6 @@ h2o.export_file(frame, path = "results/naive_bayes_permutation_importance.csv", 
 conf_matrix = nb_perf1.confusion_matrix()
 print(conf_matrix)
 
-#conf_matrix = conf_matrix.reset_index(level=0, inplace=True)
 frame = h2o.H2OFrame(conf_matrix.as_data_frame())
 #frame = frame.reset_index(level=0, inplace=True)
 h2o.export_file(frame, path = "results/naive_bayes_confusion_matrix.csv", force=True)

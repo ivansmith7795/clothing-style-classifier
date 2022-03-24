@@ -149,18 +149,18 @@ print(nb_perf1.rmse())
 The permutated variable importance matrix is the produced to show the relative information gain of each of the predictor variables. This is calculated by measuring the distance between prediction errors before and after a feature is permuted; only one feature at a time is permuted.
 
 #calculate variable importance and export to a csv file
-nb_permutation_varimp = nb_fit1.permutation_importance(train, use_pandas=True)
-print(nb_permutation_varimp)
-nb_permutation_varimp.reset_index(level=0, inplace=True)
-frame = h2o.H2OFrame(nb_permutation_varimp)
-h2o.export_file(frame, path = "results/naive_bayes_permutation_importance.csv", force=True)
+`nb_permutation_varimp = nb_fit1.permutation_importance(train, use_pandas=True)`  
+`print(nb_permutation_varimp)`  
+`nb_permutation_varimp.reset_index(level=0, inplace=True)`  
+`frame = h2o.H2OFrame(nb_permutation_varimp)`  
+`h2o.export_file(frame, path = "results/naive_bayes_permutation_importance.csv", force=True)`  
 
 
 We then produce the confusion matrix to better interpret which style has the most false positives when predicting for the test set:
 
 #Retrieve the confusion matrix
-conf_matrix = nb_perf1.confusion_matrix()  
-print(conf_matrix)
+`conf_matrix = nb_perf1.confusion_matrix()`  
+`print(conf_matrix)`
 
 
 #Export the confusion matrix

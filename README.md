@@ -234,7 +234,7 @@ h2o.export_file(prediction_table, path = "results/naive_bayes_preditions.csv", f
 
 The repo also contains several files that can be used to validate both the class size and algorithm selected for this experiment:
 
-## archived/automl.py
+## archived/auto_ml.py
 
 You can use this file to automatically iterate over a set of ensemble and standalone algorithms to discover which performs optimally. This is very useful for fast tracking experimentation and algorithm selection.
 
@@ -246,3 +246,25 @@ H20 allows you to specify the labeled dataset, response variable and number of m
 aml = H2OAutoML(max_models=20, seed=1)
 aml.train(x=x, y=y, training_frame=train)
 ```
+
+The rest of the training step is identical to the steps listed in naive_bayes_train.py.
+
+
+## archived/kmodes_clusters.py
+
+There is also a module that uses the unsupervised approach K-modes (for categorical data) to determine the optimal number of categories for the data set.
+
+We find the value for K by looping over the value for K and producing what is known as an elbow chart for identifing the optimal value for K. The Cao initializer is chosen for this, future experimentation might involve using alternate methods for validating our class number:
+
+```python
+#Finding K cost
+cost = []
+for num_clusters in list(range(1,5)):
+    kmode = KModes(n_clusters=num_clusters, init = "Cao", n_init = 1, verbose=1)
+    kmode.fit_predict(dataset)
+    cost.append(kmode.cost_)
+```
+
+Resulting elbow chart for this experiment demonstrating the k value with the least amount of error is 3:
+
+![Scheme](results/kmodes.png)

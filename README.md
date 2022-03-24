@@ -190,7 +190,7 @@ h2o.export_file(frame, path = "results/naive_bayes_confusion_matrix.csv", force=
 
 Resulting confusion matrix:
 
-![Scheme](results/confusion.png)
+![Scheme](results/confusionmatrix.png)
 
 And finally, we save our model file for prediction:  
 ```python

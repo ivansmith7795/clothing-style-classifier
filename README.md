@@ -13,7 +13,7 @@ Install dependencies (prepending with sudo if needed):
 pip install requests  
 pip install tabulate  
 pip install future 
- 
+
 Note: These are the dependencies required to run H2O. A complete list of dependencies is maintained in the following file: https://github.com/h2oai/h2o-3/blob/master/h2o-py/conda/h2o/meta.yaml.  
 
 Run the following command to remove any existing H2O module for Python.
@@ -159,7 +159,7 @@ print("Naive Bayes Estimator:")
 print(nb_perf1.rmse())
 ```
 
-The permutated variable importance matrix is the produced to show the relative information gain of each of the predictor variables. This is calculated by measuring the distance between prediction errors before and after a feature is permuted; only one feature at a time is permuted.
+The permutated variable importance matrix is produced to show the relative information gain of each of the independent predictor variables. This is calculated by measuring the distance between prediction errors before and after a feature is permuted; only one feature at a time is permuted.
 
 ```python
 #calculate variable importance and export to a csv file 

@@ -170,9 +170,9 @@ h2o.export_file(frame, path = "results/naive_bayes_confusion_matrix.csv", force=
 
 
 And finally, we save our model file for prediction:
-'''
-model_path = h2o.save_model(model=nb_fit1, path="models", force=True)
-'''
+
+`model_path = h2o.save_model(model=nb_fit1, path="models", force=True)`
+
 
 
 

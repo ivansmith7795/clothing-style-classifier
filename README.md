@@ -169,7 +169,7 @@ frame = h2o.H2OFrame(nb_permutation_varimp)
 h2o.export_file(frame, path = "results/naive_bayes_permutation_importance.csv", force=True)
 ```
 
-Resulting variable importance matrix:
+Resulting variable importance matrix (most important to least imporant in the top 25 predictors):
 
 ![Scheme](results/variableimportance.png)
 

@@ -37,11 +37,6 @@ Naïve Bayes models are commonly used as an alternative to decision trees for cl
 
 The output from Naïve Bayes is a list of tables containing the a-priori and conditional probabilities of each class of the response. The a-priori probability is the estimated probability of a particular class before observing any of the predictors. Each conditional probability table corresponds to a predictor column. The row headers are the classes of the response and the column headers are the classes of the predictor. Thus, in the sample output below, the probability of survival (y) given a person is male (x) is 0.51617440.
 
-                Sex
-Survived       Male     Female
-     No  0.91543624 0.08456376
-     Yes 0.51617440 0.48382560
-
 When the predictor is numeric, Naïve Bayes assumes it is sampled from a Gaussian distribution given the class of the response. The first column contains the mean and the second column contains the standard deviation of the distribution.
 
 By default, the following output displays:

@@ -25,7 +25,7 @@ train[y] = train[y].asfactor()
 test[y] = test[y].asfactor()
 
 # Run AutoML for 20 base models
-aml = H2OAutoML(max_models=5, seed=1)
+aml = H2OAutoML(max_models=20, seed=1)
 aml.train(x=x, y=y, training_frame=train)
 
 # View the AutoML Leaderboard

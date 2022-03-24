@@ -98,6 +98,7 @@ Laplace smoothing should be used with care; it is generally intended to allow fo
 
 We first training script naive_bayes_train.py to build the model artifact (/models/nb_fit1). This contains our weights and parameters needed to make a prediction, and load the model into memory (optimization memory utilization for production). The number of threads and maximum memory allocated for the training process can be specified after the package is imported:
 
+```python
 import h2o
 from h2o.estimators.naive_bayes import H2ONaiveBayesEstimator
 
@@ -108,65 +109,78 @@ Once initialized, we load the data set from the manually annotated set into the 
 #Load the data from the labeled data set
 data_csv = "datasets/dataset_dresses_labeled_processed.csv" 
 data = h2o.import_file(data_csv)
+```
 
 We then split the labeled set into three parts, training set, validation set and the test set (or holdout set) using a 75 / 15 / 5 split respectively:
 
+```python
 #Split out data set into 3 parts for training, validation and testing.
 splits = data.split_frame(ratios=[0.7, 0.15], seed=1)  
 train = splits[0]
 valid = splits[1]
 test = splits[2]
+```
 
 The test set in this implementation is required to validate our results and produce a confusion matrix for demonstrating false positives.
 
 Next, we define the response column we're interested in predicting for (style column) and remove it from the set (Naive Bayes requires the response variable is introduced seperately from our independent variables during training)
 
+```python
 y = 'Styles'
 x = list(data.columns)
 
 x.remove(y)  #remove the response
 x.remove('Style options') 
 x.remove('link')
+```
 
 Once the data has been seperated into response and dependent variables, we begin training. A seed value of 1 is provided to randomize the underlying shuffling of the dataset:
 
+```python
 #Train the model and produce the model file nb_fit1
 nb_fit1 = H2ONaiveBayesEstimator(model_id='nb_fit1', seed=1)
 nb_fit1.train(x=x, y=y, training_frame=train)
-
+```
 
 Other parameters can be tuned in the H20NaiveBayesEstimator function if desired, including specifying the number of nfolds for cross-validation testing (the default of 0 was used in this test). Future work may include tuining this parameter for a better result.
 
 Performance metrics and the calculated RMSE score of the model is produced using the holdout set (test set from the remaining 5% of the labeled data set described earlier). RMSE is used as the scoring method and not AUC, since AUC scores have been proven to be unreliable.
 
+```python
 #Produce the performance metrics
 nb_perf1 = nb_fit1.model_performance(test)
+```
 
-`#Print the RMSE score of the model`
-`print("Naive Bayes Estimator:")`
-`print(nb_perf1.rmse())`
+```python
+#Print the RMSE score of the model
+print("Naive Bayes Estimator:")
+print(nb_perf1.rmse())
+```
 
 The permutated variable importance matrix is the produced to show the relative information gain of each of the predictor variables. This is calculated by measuring the distance between prediction errors before and after a feature is permuted; only one feature at a time is permuted.
 
-`#calculate variable importance and export to a csv file`  
-`nb_permutation_varimp = nb_fit1.permutation_importance(train, use_pandas=True)`  
-`print(nb_permutation_varimp)`  
-`nb_permutation_varimp.reset_index(level=0, inplace=True)`  
-`frame = h2o.H2OFrame(nb_permutation_varimp)`  
-`h2o.export_file(frame, path = "results/naive_bayes_permutation_importance.csv", force=True)`  
-
+```python
+#calculate variable importance and export to a csv file 
+nb_permutation_varimp = nb_fit1.permutation_importance(train, use_pandas=True)
+print(nb_permutation_varimp)
+nb_permutation_varimp.reset_index(level=0, inplace=True)
+frame = h2o.H2OFrame(nb_permutation_varimp)
+h2o.export_file(frame, path = "results/naive_bayes_permutation_importance.csv", force=True)
+```
 
 We then produce the confusion matrix to better interpret which style has the most false positives when predicting for the test set:
 
-`#Retrieve the confusion matrix`  
-`conf_matrix = nb_perf1.confusion_matrix()`  
-`print(conf_matrix)`
+```python
+#Retrieve the confusion matrix 
+conf_matrix = nb_perf1.confusion_matrix()
+print(conf_matrix)
+```
 
-
-`#Export the confusion matrix`  
-`frame = h2o.H2OFrame(conf_matrix.as_data_frame())`  
-`h2o.export_file(frame, path = "results/naive_bayes_confusion_matrix.csv", force=True)`
-
+```python
+#Export the confusion matrix
+frame = h2o.H2OFrame(conf_matrix.as_data_frame())
+h2o.export_file(frame, path = "results/naive_bayes_confusion_matrix.csv", force=True)
+```
 
 And finally, we save our model file for prediction:  
 ```python

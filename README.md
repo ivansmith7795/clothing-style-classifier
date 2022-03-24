@@ -10,25 +10,25 @@ Run the following commands in a Terminal window to install H2O for Python.
 
 Install dependencies (prepending with sudo if needed):
 
-pip install requests
-pip install tabulate
-pip install future
-Note: These are the dependencies required to run H2O. A complete list of dependencies is maintained in the following file: https://github.com/h2oai/h2o-3/blob/master/h2o-py/conda/h2o/meta.yaml.
+pip install requests  
+pip install tabulate  
+pip install future  
+Note: These are the dependencies required to run H2O. A complete list of dependencies is maintained in the following file: https://github.com/h2oai/h2o-3/blob/master/h2o-py/conda/h2o/meta.yaml.  
 
 Run the following command to remove any existing H2O module for Python.
 
-pip uninstall h2o
-Use pip to install this version of the H2O Python module.
+pip uninstall h2o  
+Use pip to install this version of the H2O Python module.  
 
-pip install -f http://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o
-Note: When installing H2O from pip in OS X El Capitan, users must include the --user flag. For example:
+pip install -f http://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o  
+Note: When installing H2O from pip in OS X El Capitan, users must include the --user flag. For example:  
 
-pip install -f http://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o --user
-Optionally initialize H2O in Python and run a demo to see H2O at work.
+pip install -f http://h2o-release.s3.amazonaws.com/h2o/latest_stable_Py.html h2o --user  
+Optionally initialize H2O in Python and run a demo to see H2O at work.  
 
-import h2o
-h2o.init()
-h2o.demo("glm")
+import h2o  
+h2o.init()  
+h2o.demo("glm")  
 
 # Training and Prediction Process of Naive Bayes with H20
 Naïve Bayes is a classification algorithm that relies on strong assumptions of the independence of covariates in applying Bayes Theorem. The Naïve Bayes classifier assumes independence between predictor variables conditional on the response, and a Gaussian distribution of numeric predictors with mean and standard deviation computed from the training dataset.

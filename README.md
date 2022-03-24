@@ -169,6 +169,11 @@ frame = h2o.H2OFrame(nb_permutation_varimp)
 h2o.export_file(frame, path = "results/naive_bayes_permutation_importance.csv", force=True)
 ```
 
+Resulting variable importance matrix:
+
+![Scheme](results/variableimportance.png)
+
+
 We then produce the confusion matrix to better interpret which style has the most false positives when predicting for the test set:
 
 ```python
@@ -182,6 +187,10 @@ print(conf_matrix)
 frame = h2o.H2OFrame(conf_matrix.as_data_frame())
 h2o.export_file(frame, path = "results/naive_bayes_confusion_matrix.csv", force=True)
 ```
+
+Resulting confusion matrix:
+
+![Scheme](results/confusion.png)
 
 And finally, we save our model file for prediction:  
 ```python

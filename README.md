@@ -142,13 +142,13 @@ Performance metrics and the calculated RMSE score of the model is produced using
 #Produce the performance metrics
 nb_perf1 = nb_fit1.model_performance(test)
 
-#Print the RMSE score of the model
-print("Naive Bayes Estimator:")
-print(nb_perf1.rmse())
+`#Print the RMSE score of the model`
+`print("Naive Bayes Estimator:")`
+`print(nb_perf1.rmse())`
 
 The permutated variable importance matrix is the produced to show the relative information gain of each of the predictor variables. This is calculated by measuring the distance between prediction errors before and after a feature is permuted; only one feature at a time is permuted.
 
-#calculate variable importance and export to a csv file
+`#calculate variable importance and export to a csv file`  
 `nb_permutation_varimp = nb_fit1.permutation_importance(train, use_pandas=True)`  
 `print(nb_permutation_varimp)`  
 `nb_permutation_varimp.reset_index(level=0, inplace=True)`  
@@ -158,19 +158,17 @@ The permutated variable importance matrix is the produced to show the relative i
 
 We then produce the confusion matrix to better interpret which style has the most false positives when predicting for the test set:
 
-#Retrieve the confusion matrix
+`#Retrieve the confusion matrix`  
 `conf_matrix = nb_perf1.confusion_matrix()`  
 `print(conf_matrix)`
 
 
-#Export the confusion matrix
-
+`#Export the confusion matrix`  
 `frame = h2o.H2OFrame(conf_matrix.as_data_frame())`  
 `h2o.export_file(frame, path = "results/naive_bayes_confusion_matrix.csv", force=True)`
 
 
-And finally, we save our model file for prediction:
-
+And finally, we save our model file for prediction:  
 `model_path = h2o.save_model(model=nb_fit1, path="models", force=True)`
 
 

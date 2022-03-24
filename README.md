@@ -165,8 +165,8 @@ print(conf_matrix)
 
 #Export the confusion matrix
 
-frame = h2o.H2OFrame(conf_matrix.as_data_frame())  
-h2o.export_file(frame, path = "results/naive_bayes_confusion_matrix.csv", force=True)
+`frame = h2o.H2OFrame(conf_matrix.as_data_frame())`
+`h2o.export_file(frame, path = "results/naive_bayes_confusion_matrix.csv", force=True)`
 
 
 And finally, we save our model file for prediction:

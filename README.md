@@ -254,7 +254,7 @@ The rest of the training step is identical to the steps listed in naive_bayes_tr
 
 There is also a module that uses the unsupervised approach K-modes (for categorical data) to determine the optimal number of categories for the data set.
 
-We find the value for K by looping over the value for K and producing what is known as an elbow chart for identifing the optimal value for K. The Cao initializer is chosen for this, future experimentation might involve using alternate methods for validating our class number:
+We find the value for K by looping over the value for K and producing what is known as an elbow chart for identifing the optimal value for K (ranging from 1 cluster to 5). The Cao initializer is chosen for this, future experimentation might involve using alternate methods for validating our class number:
 
 ```python
 #Finding K cost

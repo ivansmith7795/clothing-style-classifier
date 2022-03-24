@@ -200,7 +200,7 @@ model_path = h2o.save_model(model=nb_fit1, path="models", force=True)
 
 ## naive_bayes_predict.py 
 
-Now that we have the model created (models/nb_fit1) from our previous script (naive_bayes_train.py), the naive_bayes_predict.py script can be used to make predictions on unseen examlples to determine the style of clothing from the other features:
+Now that we have the model created (models/nb_fit1) from our previous script (naive_bayes_train.py), the naive_bayes_predict.py script can be used to make predictions on unseen examples to determine the style of clothing from the other features:
 
 ```python
 #First, initialize the H2O agent and load the unlabeled samples

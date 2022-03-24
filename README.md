@@ -192,7 +192,7 @@ Resulting confusion matrix:
 
 ![Scheme](results/confusionmatrix.png)
 
-And finally, we save our model file for prediction:  
+And finally, we save our model file for use with future predictions:  
 ```python
 model_path = h2o.save_model(model=nb_fit1, path="models", force=True)
 ```

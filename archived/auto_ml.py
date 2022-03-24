@@ -3,7 +3,7 @@ from h2o.automl import H2OAutoML
 
 # Start the H2O cluster (locally)
 h2o.init(nthreads = -1, max_mem_size = 8)
-data_csv = "datasets/dataset_dresses_processed.csv" 
+data_csv = "../datasets/dataset_dresses_labeled_processed.csv" 
 
 data = h2o.import_file(data_csv)
 
@@ -31,18 +31,18 @@ aml.train(x=x, y=y, training_frame=train)
 # View the AutoML Leaderboard
 lb = aml.leaderboard
 print(lb.head(rows=lb.nrows))  # Print all rows instead of default (10 rows)
-h2o.export_file(lb, path = "results/classification_algo_leaders.csv")
+h2o.export_file(lb, path = "../results/classification_algo_leaders.csv")
 
-#Export the models
-for m in aml.leaderboard.as_data_frame()['model_id']:
-    model = h2o.get_model(m)
+#Export the models (commented out to avoid overwriting the bayes classifier)
+##for m in aml.leaderboard.as_data_frame()['model_id']:
+##   model = h2o.get_model(m)
     
     # Retrieve the variable importance
-    varimp = model.varimp(use_pandas=True)
-    print(varimp)
-    h2o.export_file(varimp, path = "models/")
+##    varimp = model.varimp(use_pandas=True)
+##    print(varimp)
+##   h2o.export_file(varimp, path = "../models/")
 
-    confusion_matrix = model.confusion_matrix()
-    h2o.export_file(confusion_matrix, path = "models/")
+##    confusion_matrix = model.confusion_matrix()
+##    h2o.export_file(confusion_matrix, path = "../models/")
 
-    model_path = h2o.save_model(model=m, path="models", force=True)
+##    model_path = h2o.save_model(model=m, path="models", force=True)

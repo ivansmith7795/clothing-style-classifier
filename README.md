@@ -12,7 +12,8 @@ Install dependencies (prepending with sudo if needed):
 
 pip install requests  
 pip install tabulate  
-pip install future  
+pip install future 
+ 
 Note: These are the dependencies required to run H2O. A complete list of dependencies is maintained in the following file: https://github.com/h2oai/h2o-3/blob/master/h2o-py/conda/h2o/meta.yaml.  
 
 Run the following command to remove any existing H2O module for Python.

@@ -94,7 +94,7 @@ Note that in the general case where y takes on k values, there are k+1 modified 
 Laplace smoothing should be used with care; it is generally intended to allow for predictions in rare events. As prediction data becomes increasingly distinct from training data, train new models when possible to account for a broader set of possible X values.
 
 
-# Applied Use for Clothing Classifier
+# Applying Naive Bayes Classifier for Styles
 
 ## naive_bayes_train.py 
 We first training script naive_bayes_train.py to build the model artifact (/models/nb_fit1). This contains our weights and parameters needed to make a prediction, and load the model into memory (optimization memory utilization for production). The number of threads and maximum memory allocated for the training process can be specified after the package is imported:

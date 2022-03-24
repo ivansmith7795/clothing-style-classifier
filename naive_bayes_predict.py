@@ -1,6 +1,7 @@
 import h2o
 from h2o.estimators.naive_bayes import H2ONaiveBayesEstimator
 
+#First, initialize the H2O agent and load the unlabeled samples
 h2o.init(nthreads = -1, max_mem_size = 8)
 data_csv = "datasets/dataset_dresses_unlabeled_processed.csv" 
 

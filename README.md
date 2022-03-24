@@ -189,6 +189,60 @@ model_path = h2o.save_model(model=nb_fit1, path="models", force=True)
 ```
 
 
+## naive_bayes_predict.py 
+
+Now that we have the model created (models/nb_fit1) from our previous script (naive_bayes_train.py), the naive_bayes_predict.py script can be used to make predictions on unseen examlples to determine the style of clothing from the other features:
+
+```python
+#First, initialize the H2O agent and load the unlabeled samples
+h2o.init(nthreads = -1, max_mem_size = 8)
+data_csv = "datasets/dataset_dresses_unlabeled_processed.csv"
+data = h2o.import_file(data_csv)
+```
+
+Next, we tell designate the predictor columns (all columns are independent in this case since the unlabeled set does not have the target variable included)
+
+```python
+#Set the prdictor columns to every column (since the repsponse variable is not part of this set)
+prediction_set = list(data.columns)
+```
+
+Now we load our model file into memory, which contains all the parameters and weights learned during training in the previous step:
+
+```python
+# load the model
+saved_model = h2o.load_model('models/nb_fit1')
+```
+
+And finally, predict the response value (Style) for every sample in the unlabeled set:
+
+```python
+# Predict what the style is for each row of data
+predicted_style = saved_model.predict(data)
+print(predicted_style)
+```
+
+Create the prediction table (with the style column populated) and export to CSV for viewing:
+
+```python
+prediction_table = predicted_style.cbind(data)
+h2o.export_file(prediction_table, path = "results/naive_bayes_preditions.csv", force=True)
+```
 
 
+# Experimental Files
 
+The repo also contains several files that can be used to validate both the class size and algorithm selected for this experiment:
+
+## archived/automl.py
+
+You can use this file to automatically iterate over a set of ensemble and standalone algorithms to discover which performs optimally. This is very useful for fast tracking experimentation and algorithm selection.
+
+H20 allows you to specify the labeled dataset, response variable and number of models you wish to test (chosen at random). You can then train the set of models simultaneously, and view which produces the "best" overall result:
+
+
+```python
+# Run AutoML for 20 base models
+aml = H2OAutoML(max_models=20, seed=1)
+aml.train(x=x, y=y, training_frame=train)
+```

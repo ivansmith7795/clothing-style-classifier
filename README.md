@@ -169,7 +169,9 @@ We then produce the confusion matrix to better interpret which style has the mos
 
 
 And finally, we save our model file for prediction:  
-`model_path = h2o.save_model(model=nb_fit1, path="models", force=True)`
+```python
+model_path = h2o.save_model(model=nb_fit1, path="models", force=True)
+```
 
 
 

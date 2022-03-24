@@ -159,13 +159,13 @@ h2o.export_file(frame, path = "results/naive_bayes_permutation_importance.csv", 
 We then produce the confusion matrix to better interpret which style has the most false positives when predicting for the test set:
 
 #Retrieve the confusion matrix
-conf_matrix = nb_perf1.confusion_matrix()
+conf_matrix = nb_perf1.confusion_matrix()  
 print(conf_matrix)
 
 
 #Export the confusion matrix
 
-frame = h2o.H2OFrame(conf_matrix.as_data_frame())
+frame = h2o.H2OFrame(conf_matrix.as_data_frame())  
 h2o.export_file(frame, path = "results/naive_bayes_confusion_matrix.csv", force=True)
 
 

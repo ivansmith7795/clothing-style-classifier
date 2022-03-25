@@ -142,7 +142,7 @@ def clean_data(dataset, datatype):
         # Convert back from numpy to pandas and add the column headers back on
         dataset = pd.DataFrame(dataset, columns = datacols)
 
-    # Save the unlabeled set to a file
+    # Save the processed dataset to a file
     dataset.to_csv('datasets/dataset_dresses_' + datatype + '_processed.csv')
 
 

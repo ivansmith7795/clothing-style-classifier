@@ -50,7 +50,7 @@ A Priori response probabilities
 
 P-conditionals
 
-# Explaination of the Bayes Classifier Used for this Implmentation
+# Explaination of the Bayes Classifier Used for this Implementation
 
 The algorithm is presented for the simplified binomial case without loss of generality.
 

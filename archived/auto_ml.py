@@ -17,8 +17,6 @@ y = 'Styles'
 x = list(data.columns)
 
 x.remove(y)  #remove the response
-x.remove('Style options') 
-x.remove('link')
 
 # For binary classification, response should be a factor
 train[y] = train[y].asfactor()

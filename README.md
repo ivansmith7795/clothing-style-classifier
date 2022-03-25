@@ -108,7 +108,7 @@ labeled_dataset = pd.read_csv('datasets/dataset_dresses_labeled.csv')
 unlabeled_dataset = pd.read_csv('datasets/dataset_dresses_unlabeled.csv')
 ```
 
-One loaded, we clean the data and impute any missing values in the dataset using a simple imputer function. For categorical data, the data is imputed using the most commonly used value:
+Once loaded, we clean the data and impute any missing values in the dataset using a simple imputer function. For categorical data, the data is imputed using the most commonly used value:
 
 ```python
 def clean_data(dataset, datatype):

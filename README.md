@@ -113,7 +113,7 @@ data_csv = "datasets/dataset_dresses_labeled_processed.csv"
 data = h2o.import_file(data_csv)
 ```
 
-We then split the labeled set into three parts, training set, validation set and the test set (or holdout set) using a 75 / 15 / 5 split respectively:
+We then split the labeled set into three parts, training set, validation set and the test set (or holdout set) using a 70 / 15 / 15 split respectively:
 
 ```python
 #Split out data set into 3 parts for training, validation and testing.

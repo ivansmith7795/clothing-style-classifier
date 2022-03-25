@@ -170,7 +170,7 @@ nb_fit1.train(x=x, y=y, training_frame=train)
 
 Other parameters can be tuned in the H20NaiveBayesEstimator function if desired, including specifying the number of nfolds for cross-validation testing (the default of 0 was used in this test). Future work may include tuining this parameter for a better result.
 
-Performance metrics and the calculated RMSE score of the model is produced using the holdout set (test set from the remaining 5% of the labeled data set described earlier). RMSE is used as the scoring method and not AUC, since AUC scores have been proven to be unreliable.
+Performance metrics and the calculated RMSE score of the model is produced using the holdout set (test set from the remaining 15% of the labeled data set described earlier). RMSE is used as the scoring method and not AUC, since AUC scores have been proven to be unreliable.
 
 ```python
 #Produce the performance metrics

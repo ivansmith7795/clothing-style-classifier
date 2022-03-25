@@ -150,18 +150,21 @@ clean_data(labeled_dataset, 'labeled')
 clean_data(unlabeled_dataset, 'unlabeled')
 ```
 
-The imputer can also be used to interpolate missing values in the dataset. This has been turned off for the experiment though, as the Naive Bayes implementation used from H20 will automatically account for missing columar data by skipping the individual predictors during probability calculation; therefore imputation is less important.
+The imputer is used to interpolate missing values in the labeled (training) dataset:
 
 ```python
-#Impute our missing categorical data
-#imputer = SimpleImputer(strategy="most_frequent")
-#dataset = imputer.fit_transform(dataset)
+#Impute our missing numeric / categorical data (there are lots!)
+imputer = SimpleImputer(strategy="most_frequent")
+dataset = imputer.fit_transform(dataset)
+
+# Convert back from numpy to pandas and add the column headers back on
+dataset = pd.DataFrame(dataset, columns = datacols)
 ```
 
 We then save the processed data with null predictors removed to a cleaned dataset which is ready to be imported into our training script:
 
 ```python
-dataset.to_csv('datasets/dataset_dresses_unlabeled_processed.csv')
+dataset.to_csv('datasets/dataset_dresses_' + datatype + '_processed.csv')
 ```
 
 ## naive_bayes_train.py 
@@ -237,7 +240,7 @@ h2o.export_file(frame, path = "results/naive_bayes_permutation_importance.csv", 
 
 Resulting variable importance matrix (most important to least imporant in the top 25 predictors):
 
-![Scheme](results/variableimportance.png)
+![Scheme](results/variableimportance_styles.png)
 
 
 We then produce the confusion matrix to better interpret which style has the most false positives when predicting for the test set:
@@ -256,7 +259,7 @@ h2o.export_file(frame, path = "results/naive_bayes_confusion_matrix.csv", force=
 
 Resulting confusion matrix:
 
-![Scheme](results/confusionmatrix.png)
+![Scheme](results/confusionmatrix_styles.png)
 
 And finally, we save our model file for use with future predictions:  
 ```python

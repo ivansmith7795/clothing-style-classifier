@@ -19,9 +19,6 @@ x = list(data.columns)
 
  #remove the response from our independent variable list along with the link and style options categories
 x.remove(y) 
-x.remove('Style options') 
-x.remove('link')
-
 
 #Train the model and produce the model file nb_fit1
 nb_fit1 = H2ONaiveBayesEstimator(model_id='nb_fit1', seed=1)

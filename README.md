@@ -104,7 +104,50 @@ We import the unprocessed data into pandas first:
 
 ```python
 #Import into pandas
-dataset = pd.read_csv('datasets/dataset_dresses_unlabeled.csv')
+labeled_dataset = pd.read_csv('datasets/dataset_dresses_labeled.csv')
+unlabeled_dataset = pd.read_csv('datasets/dataset_dresses_unlabeled.csv')
+```
+
+One loaded, we clean the data and impute any missing values in the dataset using a simple imputer function. For categorical data, the data is imputed using the most commonly used value:
+
+```python
+def clean_data(dataset, datatype):
+    
+    # Clear empty field special characters and replace with blank values
+    dataset = dataset.replace('--', np.NaN, regex=True)
+
+    #Remove all columns that are all NaN
+    dataset = dataset.dropna(how='all', axis=1)
+
+    #Remove the price special characters and convert to numeric
+    dataset = dataset.replace(to_replace ='Â£', value = '', regex = True)
+    dataset = dataset.replace(to_replace ='Â', value = '', regex = True)
+
+    #Convert the price column to numeric
+    dataset['price'] = dataset['price'].apply(pd.to_numeric, errors='coerce')
+
+    #Drop other unused columns
+    dataset = dataset.drop(columns=['Unnamed: 4', 'link'])
+
+    #Get the columns
+    datacols = list(dataset.columns)
+
+    # Only impute for the labeled training data (we will use the unlabeled data for predicting the style class, where the imputations are not required):
+    if datatype == 'labeled':
+
+        #Impute our missing numeric / categorical data (there are lots!)
+        imputer = SimpleImputer(strategy="most_frequent")
+        dataset = imputer.fit_transform(dataset)
+
+        # Convert back from numpy to pandas and add the column headers back on
+        dataset = pd.DataFrame(dataset, columns = datacols)
+
+    # Save the unlabeled set to a file
+    dataset.to_csv('datasets/dataset_dresses_' + datatype + '_processed.csv')
+
+
+clean_data(labeled_dataset, 'labeled')
+clean_data(unlabeled_dataset, 'unlabeled')
 ```
 
 The imputer can also be used to interpolate missing values in the dataset. This has been turned off for the experiment though, as the Naive Bayes implementation used from H20 will automatically account for missing columar data by skipping the individual predictors during probability calculation; therefore imputation is less important.
@@ -149,15 +192,13 @@ test = splits[2]
 
 The test set in this implementation is required to validate our results and produce a confusion matrix for demonstrating false positives.
 
-Next, we define the response column we're interested in predicting for (style column) and remove it from the set (Naive Bayes requires the response variable is introduced seperately from our independent variables during training). We also remove a few other features that are not required (Style Options and Link):
+Next, we define the response column we're interested in predicting for (style column) and remove it from the set (Naive Bayes requires the response variable is introduced seperately from our independent variables during training):
 
 ```python
 y = 'Styles'
 x = list(data.columns)
 
 x.remove(y)  #remove the response
-x.remove('Style options') 
-x.remove('link')
 ```
 
 Once the data has been seperated into response and dependent variables, we begin training. A seed value of 1 is provided to randomize the underlying shuffling of the dataset:

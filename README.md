@@ -149,7 +149,7 @@ test = splits[2]
 
 The test set in this implementation is required to validate our results and produce a confusion matrix for demonstrating false positives.
 
-Next, we define the response column we're interested in predicting for (style column) and remove it from the set (Naive Bayes requires the response variable is introduced seperately from our independent variables during training)
+Next, we define the response column we're interested in predicting for (style column) and remove it from the set (Naive Bayes requires the response variable is introduced seperately from our independent variables during training). We also remove a few other features that are not required (Style Options and Link):
 
 ```python
 y = 'Styles'

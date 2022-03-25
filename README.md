@@ -240,7 +240,7 @@ h2o.export_file(frame, path = "results/naive_bayes_permutation_importance.csv", 
 
 Resulting variable importance matrix (most important to least imporant in the top 25 predictors):
 
-![Scheme](results/variableimportance_styles.png)
+![Scheme](results/variableimportance.png)
 
 
 We then produce the confusion matrix to better interpret which style has the most false positives when predicting for the test set:
@@ -259,7 +259,7 @@ h2o.export_file(frame, path = "results/naive_bayes_confusion_matrix.csv", force=
 
 Resulting confusion matrix:
 
-![Scheme](results/confusionmatrix_styles.png)
+![Scheme](results/confusionmatrix.png)
 
 And finally, we save our model file for use with future predictions:  
 ```python

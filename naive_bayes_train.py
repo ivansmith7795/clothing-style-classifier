@@ -30,7 +30,7 @@ nb_perf1 = nb_fit1.model_performance(test)
 #Print the RMSE score of the model
 print("Naive Bayes Estimator:")
 print(nb_perf1.rmse())
-
+print(nb_perf1)
 # calculate variable importance and export to a csv file
 nb_permutation_varimp = nb_fit1.permutation_importance(train, use_pandas=True)
 print(nb_permutation_varimp)

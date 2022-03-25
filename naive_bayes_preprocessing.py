@@ -1,11 +1,6 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-
-import statsmodels.api as sm
-from statsmodels.formula.api import ols
-from scipy import stats
-from matplotlib.pyplot import figure
 from sklearn.impute import SimpleImputer
 
 import seaborn as sns

@@ -97,8 +97,32 @@ Laplace smoothing should be used with care; it is generally intended to allow fo
 
 # Applying the H20 Naive Bayes Package for the Clothing Classifier
 
+## naive_bayes_preprocess.py 
+First, we preprocess our data using the preprocessing script naive_bayes_preprocess.py. This produces a new CSV file with the clean training set (and imputed values, if desired) included.
+
+We import the unprocessed data into pandas first:
+
+```python
+#Import into pandas
+dataset = pd.read_csv('datasets/dataset_dresses_unlabeled.csv')
+```
+
+The imputer can also be used to interpolate missing values in the dataset. This has been turned off for the experiment though, as the Naive Bayes implementation used from H20 will automatically account for missing columar data by skipping the individual predictors during probability calculation; therefore imputation is less important.
+
+```python
+#Impute our missing categorical data
+#imputer = SimpleImputer(strategy="most_frequent")
+#dataset = imputer.fit_transform(dataset)
+```
+
+We then save the processed data with null predictors removed to a cleaned dataset which is ready to be imported into our training script:
+
+```python
+dataset.to_csv('datasets/dataset_dresses_unlabeled_processed.csv')
+```
+
 ## naive_bayes_train.py 
-First, we use the training script naive_bayes_train.py to build the model artifact (/models/nb_fit1). This contains our weights and parameters needed to make a prediction, and load the model into memory (optimization memory utilization for production). The number of threads and maximum memory allocated for the training process can be specified after the package is imported:
+We use the training script naive_bayes_train.py to build the model artifact (/models/nb_fit1). This contains our weights and parameters needed to make a prediction, and load the model into memory (optimization memory utilization for production). The number of threads and maximum memory allocated for the training process can be specified after the package is imported:
 
 ```python
 import h2o

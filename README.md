@@ -98,7 +98,7 @@ Laplace smoothing should be used with care; it is generally intended to allow fo
 # Applying the H20 Naive Bayes Package for the Clothing Classifier
 
 ## naive_bayes_preprocess.py 
-First, we preprocess our data using the preprocessing script naive_bayes_preprocess.py. This produces a new CSV file with the clean training set (and imputed values, if desired) included.
+First, we preprocess our data using the preprocessing script naive_bayes_preprocess.py. This produces a new CSV file with the clean training set (and imputed values, if desired):
 
 We import the unprocessed data into pandas first:
 
@@ -122,7 +122,7 @@ dataset.to_csv('datasets/dataset_dresses_unlabeled_processed.csv')
 ```
 
 ## naive_bayes_train.py 
-We use the training script naive_bayes_train.py to build the model artifact (/models/nb_fit1). This contains our weights and parameters needed to make a prediction, and load the model into memory (optimization memory utilization for production). The number of threads and maximum memory allocated for the training process can be specified after the package is imported:
+We use the training script naive_bayes_train.py to build the model artifact (/models/nb_fit1). This contains our weights and parameters needed to make a predictions, and load the model into memory (optimization memory utilization for production). The number of threads and maximum memory allocated for the training process can be specified after the package is imported:
 
 ```python
 import h2o

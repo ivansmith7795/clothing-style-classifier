@@ -9,14 +9,16 @@ import statsmodels.api as sm
 analysis_name = "Clothing Type Classifier"
 
 #Import into pandas
-labeled_dataset = pd.read_csv('datasets/dataset_dresses_labeled.csv')
-unlabeled_dataset = pd.read_csv('datasets/dataset_dresses_unlabeled.csv')
+labeled_dataset = pd.read_csv('datasets/dataset_dresses_labeled_cv.csv')
+unlabeled_dataset = pd.read_csv('datasets/dataset_dresses_unlabeled_cv.csv')
 
 def clean_data(dataset, datatype):
     
-
     # Clear empty field special characters and replace with blank values
     dataset = dataset.replace('--', np.NaN, regex=True)
+
+    #Drop unused columns
+    dataset = dataset.drop(columns=['Random order', 'Original order', 'link', 'Sport', 'Sleeve length 1', 'Front material', 'Licensed characters', 'Outer leg length', 'Middle part material', 'Back material', 'Jacket length', 'Top part material', 'Filling', 'Insert material', 'Sleeves material'])
 
     #Remove all columns that are all NaN
     dataset = dataset.dropna(how='all', axis=1)
@@ -27,9 +29,6 @@ def clean_data(dataset, datatype):
 
     #Convert the price column to numeric
     dataset['price'] = dataset['price'].apply(pd.to_numeric, errors='coerce')
-
-    #Drop other unused columns
-    dataset = dataset.drop(columns=['Unnamed: 4', 'link'])
 
     #Get the columns
     datacols = list(dataset.columns)

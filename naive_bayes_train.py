@@ -8,7 +8,7 @@ h2o.init(nthreads = -1, max_mem_size = 8)
 data_csv = "datasets/dataset_dresses_labeled_processed.csv" 
 data = h2o.import_file(data_csv)
 
-splits = data.split_frame(ratios=[0.7, 0.15], seed=1)  
+splits = data.split_frame(ratios=[0.8, 0.10], seed=1)  
 
 train = splits[0]
 valid = splits[1]
@@ -17,7 +17,7 @@ test = splits[2]
 y = 'Styles'
 x = list(data.columns)
 
- #remove the response from our independent variable list along with the link and style options categories
+#remove the response from our independent variable list along with the link and style options categories
 x.remove(y) 
 
 #Train the model and produce the model file nb_fit1

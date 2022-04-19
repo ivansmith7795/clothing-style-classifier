@@ -26,7 +26,14 @@ def combine_data(labeled_data, unlabled_data):
 
     # Clear empty field special characters and replace with blank values
     combined_data = combined_data.replace('--', '', regex=True)
-   
+
+    #Remove the price special characters and convert to numeric
+    combined_data = combined_data.replace(to_replace ='Â£', value = '', regex = True)
+    combined_data = combined_data.replace(to_replace ='Â', value = '', regex = True)
+
+    #Convert the price column to numeric
+    combined_data['price'] = combined_data['price'].apply(pd.to_numeric, errors='coerce')
+
     return combined_data
 
 def consolidate_data(combine_data):
@@ -34,7 +41,7 @@ def consolidate_data(combine_data):
     consolidated_data = combine_data.copy()
 
     #Drop all except Zalando filter columns
-    consolidated_data = consolidated_data[['description','Fit', 'Details', 'Sheer', 'Pockets']]
+    consolidated_data = consolidated_data[['brand', 'price', 'color', 'Outer fabric material', 'Collar', 'Sleeve length', 'Length', 'Pattern', 'Fabric']]
 
     #Remove all columns that are all NaN
     consolidated_data = consolidated_data.dropna(how='all', axis=1)
@@ -45,20 +52,25 @@ def hot_encode(dataset):
 
     encoded = dataset.copy()
 
-    encoded['description'] = LabelBinarizer().fit_transform(dataset.description)
-    encoded['Fit'] = LabelBinarizer().fit_transform(dataset.Fit)
-    encoded['Details'] = LabelBinarizer().fit_transform(dataset.Pockets)
-    encoded['Sheer'] = LabelBinarizer().fit_transform(dataset.Sheer)
-    encoded['Pockets'] = LabelBinarizer().fit_transform(dataset.Pockets)
+    encoded['brand'] = LabelBinarizer().fit_transform(dataset['brand'])
+    encoded['price'] = dataset['price']
+    encoded['color'] = LabelBinarizer().fit_transform(dataset.color)
+    encoded['Outer fabric material'] = LabelBinarizer().fit_transform(dataset['Outer fabric material'])
+    encoded['Collar'] = LabelBinarizer().fit_transform(dataset.Collar)
+    encoded['Sleeve length'] = LabelBinarizer().fit_transform(dataset['Sleeve length'])
+    encoded['Length'] = LabelBinarizer().fit_transform(dataset.Length)
+    encoded['Pattern'] = LabelBinarizer().fit_transform(dataset.Pattern)
+    encoded['Fabric'] = LabelBinarizer().fit_transform(dataset.Fabric)
 
     return encoded
 
 def build_ANN_index(dataset):
 
-    vectors = 5
+    vectors = 9
 
     ann_index = AnnoyIndex(vectors, 'angular')
     for index, row in dataset.iterrows():
+        #print(row)
         ann_index.add_item(index, row.tolist())
 
     ann_index.build(10)
@@ -79,7 +91,7 @@ def find_item_index(link):
 
 def find_top_recommendations(user_ratings):
 
-    vectors = 5
+    vectors = 9
 
     for index, row in survey_responses.iterrows():
         user = row['UserID']

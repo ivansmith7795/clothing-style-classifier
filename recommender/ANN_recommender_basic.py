@@ -74,12 +74,12 @@ def build_ANN_index(dataset):
         ann_index.add_item(index, row.tolist())
 
     ann_index.build(10)
-    ann_index.save('test.ann')
+    ann_index.save('models/basic.ann')
 
 def find_neighbours(vectors, item_index, max_neighbours):
     
     model = AnnoyIndex(vectors, 'angular')
-    model.load('modesl\basic.ann')
+    model.load('models/basic.ann')
     neighbours = model.get_nns_by_item(item_index, max_neighbours)
 
     return neighbours

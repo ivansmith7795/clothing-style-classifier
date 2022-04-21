@@ -124,7 +124,7 @@ def find_top_recommendations(user_ratings):
 
         recommendations['User']=user_email
 
-        # Save the unlabeled set to a file
+        # Save the user recommendations to a file
         recommendations.to_csv('results/'+ str(user) +'_' + user_email + '_recommendations.csv')
 
 

@@ -16,8 +16,6 @@ survey_responses = pd.read_csv('datasets/survey_results_processed.csv')
 
 def process_data (dress_data):
 
-     # Drop our engineered features
-    dress_data = dress_data.drop(columns=['Style'])
 
     # Clear empty field special characters and replace with blank values
     dress_data = dress_data.replace('--', '', regex=True)
@@ -28,6 +26,7 @@ def process_data (dress_data):
 
     #Convert the price column to numeric
     dress_data['Price'] = dress_data['Price'].apply(pd.to_numeric, errors='coerce')
+    dress_data['Price Category'] = dress_data['Price Category'].apply(pd.to_numeric, errors='coerce')
 
     return dress_data
 
@@ -37,8 +36,8 @@ def consolidate_data(combine_data):
 
     consolidated_data = combine_data.copy()
 
-    #Drop all except Zalando filter columns
-    consolidated_data = consolidated_data[['Brand', 'Price', 'Color', 'Outer fabric material', 'Collar', 'Sleeve length', 'Dress length', 'Consolidated Prints', 'Fabric']]
+    #Include our advanced features
+    consolidated_data = consolidated_data[['Style', 'Dress name', 'Brand', 'Color', 'Outer fabric material', 'Collar', 'Sleeve length', 'Dress length', 'Consolidated Prints', 'Fabric', 'Price', 'Price Category', 'Lining', 'Care instructions', 'Cut', 'Fastening', 'Type of dress', 'Details', 'Consolidated sleeve length', 'Fit', 'Consolidated fit', 'Back width', 'Sheer?', 'Pockets?', 'Rhinestones?', 'Shoulderpads?', 'Backless?']]
 
     #Remove all columns that are all NaN
     consolidated_data = consolidated_data.dropna(how='all', axis=1)
@@ -49,9 +48,10 @@ def hot_encode(dataset):
 
     encoded = dataset.copy()
 
-    # Encode our basic features into numeric representations
+    # One hot encode all our categorical data to nunmeric representations
+    encoded['Style'] = LabelBinarizer().fit_transform(dataset['Style'])
+    encoded['Dress name'] = LabelBinarizer().fit_transform(dataset['Dress name'])
     encoded['Brand'] = LabelBinarizer().fit_transform(dataset['Brand'])
-    encoded['Price'] = dataset['Price']
     encoded['Color'] = LabelBinarizer().fit_transform(dataset['Color'])
     encoded['Outer fabric material'] = LabelBinarizer().fit_transform(dataset['Outer fabric material'])
     encoded['Collar'] = LabelBinarizer().fit_transform(dataset['Collar'])
@@ -59,24 +59,42 @@ def hot_encode(dataset):
     encoded['Dress length'] = LabelBinarizer().fit_transform(dataset['Dress length'])
     encoded['Consolidated Prints'] = LabelBinarizer().fit_transform(dataset['Consolidated Prints'])
     encoded['Fabric'] = LabelBinarizer().fit_transform(dataset['Fabric'])
+    encoded['Price'] = dataset['Price']
+    encoded['Price Category'] = dataset['Price Category']
+    encoded['Lining'] = LabelBinarizer().fit_transform(dataset['Lining'])
+    encoded['Care instructions'] = LabelBinarizer().fit_transform(dataset['Care instructions'])
+    encoded['Cut'] = LabelBinarizer().fit_transform(dataset['Cut'])
+    encoded['Fastening'] = LabelBinarizer().fit_transform(dataset['Fastening'])
+    encoded['Type of dress'] = LabelBinarizer().fit_transform(dataset['Type of dress'])
+    encoded['Details'] = LabelBinarizer().fit_transform(dataset['Details'])
+    encoded['Consolidated sleeve length'] = LabelBinarizer().fit_transform(dataset['Consolidated sleeve length'])
+    encoded['Fit'] = LabelBinarizer().fit_transform(dataset['Fit'])
+    encoded['Consolidated fit'] = LabelBinarizer().fit_transform(dataset['Consolidated fit'])
+    encoded['Back width'] = LabelBinarizer().fit_transform(dataset['Back width'])
+    encoded['Sheer?'] = LabelBinarizer().fit_transform(dataset['Sheer?'])
+    encoded['Pockets?'] = LabelBinarizer().fit_transform(dataset['Pockets?'])
+    encoded['Rhinestones?'] = LabelBinarizer().fit_transform(dataset['Rhinestones?'])
+    encoded['Shoulderpads?'] = LabelBinarizer().fit_transform(dataset['Shoulderpads?'])
+    encoded['Backless?'] = LabelBinarizer().fit_transform(dataset['Backless?'])
+
 
     return encoded
 
 def build_ANN_index(dataset):
 
-    vectors = 9
+    vectors = 27
 
     ann_index = AnnoyIndex(vectors, 'angular')
     for index, row in dataset.iterrows():
         ann_index.add_item(index, row.tolist())
 
     ann_index.build(10)
-    ann_index.save('models/basic.ann')
+    ann_index.save('models/advanced.ann')
 
 def find_neighbours(vectors, item_index, max_neighbours):
     
     model = AnnoyIndex(vectors, 'angular')
-    model.load('models/basic.ann')
+    model.load('models/advanced.ann')
     neighbours = model.get_nns_by_item(item_index, max_neighbours)
 
     return neighbours
@@ -151,7 +169,7 @@ def filter_preferences(dataset, user_id):
 
 def find_top_recommendations(user_ratings):
 
-    vectors = 9
+    vectors = 27
 
     processed_data = process_data(dress_data)
     consolidated_data = consolidate_data(processed_data)
@@ -161,10 +179,13 @@ def find_top_recommendations(user_ratings):
     for index, row in survey_responses.iterrows():
         user = row['UserID']
 
+        # Filter the user preferences
+        #filtered_data = filter_preferences(processed_data, user)
+       
         single_user_ratings = user_ratings[user_ratings['UserID'] == user]
         single_user_ratings = single_user_ratings.sort_values('Rating', ascending=False)
 
-        # Get recommendations for the top 5 rated dresses per user
+        # Get recommendations for the top 2 rated dresses per user
         single_user_ratings = single_user_ratings.head(2)
 
         recommendations_index = []
@@ -174,6 +195,7 @@ def find_top_recommendations(user_ratings):
             item_index = processed_data[processed_data['Link'] == rating_row['Link'][1:]].index.values.astype(int)
 
             neighbors = find_neighbours(vectors, int(item_index[0]), 100)
+            print(rating_row['Rating'])
             for item in neighbors:
                 recommendations_index.append(item)
             
@@ -195,7 +217,7 @@ def find_top_recommendations(user_ratings):
         recommendations = filter_preferences(recommendations, user)
 
         # Save the top 10 user recommendations to a file
-        recommendations.head(10).to_csv('results/basic_features/'+ str(user) +'_' + user_email + '_recommendations.csv')
+        recommendations.head(10).to_csv('results/advanced_features/'+ str(user) +'_' + user_email + '_recommendations.csv')
 
 
 recommendations = find_top_recommendations(user_ratings)

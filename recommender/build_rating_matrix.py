@@ -9,8 +9,8 @@ pd.set_option('display.max_colwidth', -1)
 
 #Import into pandas
 
-survey_data = pd.read_csv('datasets/survey_results_processed.csv')
-rated_dresses = pd.read_csv('datasets/rated_dresses.csv')
+survey_data = pd.read_csv('datasets/survey-responses.csv')
+rated_dresses = pd.read_csv('datasets/dress-data-normalized.csv')
 
 
 def normalize_rated_dresses(rated_dresses):
@@ -18,7 +18,10 @@ def normalize_rated_dresses(rated_dresses):
     dataset = rated_dresses.copy()
 
     # Clear empty field special characters and replace with blank values
-    dataset = dataset.replace('--', '', regex=True)
+    dataset = dataset.replace('--', np.NaN, regex=True)
+
+     # Clear empty field special characters and replace with blank values
+    dataset = dataset.replace(np.NaN, 'Unknown', regex=True)
 
     #Drop unused columns
     dataset = dataset.drop(columns=['Article number'])
@@ -27,7 +30,7 @@ def normalize_rated_dresses(rated_dresses):
     dataset = dataset.dropna(how='all', axis=1)
 
     #Convert the price column to numeric
-    dataset['price'] = dataset['price'].apply(pd.to_numeric, errors='coerce')
+    dataset['Price'] = dataset['Price'].apply(pd.to_numeric, errors='coerce')
 
     #Get the columns
     datacols = list(dataset.columns)
@@ -36,7 +39,7 @@ def normalize_rated_dresses(rated_dresses):
     dataset = pd.DataFrame(dataset, columns = datacols)
 
     # Save the unlabeled set to a file
-    dataset.to_csv('datasets/rated_dresses_processed.csv')
+    dataset.to_csv('datasets/dress-data-processed.csv')
 
     return dataset
 
@@ -49,7 +52,7 @@ def build_matrix(survey_data):
         user_id = row['UserID']
 
         for i in range(1, 20):
-            link = rated_dresses.iloc[[i-1]]['link'].to_string(header=False, index=False)
+            link = rated_dresses.iloc[[i-1]]['Link'].to_string(header=False, index=False)
            
             rating = [user_id, row['UserEmail'], link, i, row['Dress '+str(i)+'/20. How likely is it that you would wear this dress?'][:1]]
             user_data.append(rating)

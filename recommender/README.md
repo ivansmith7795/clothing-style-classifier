@@ -30,7 +30,7 @@ In order to this article well structured and somewhat concise, I won't discuss t
 
 # Using ANNOY Recommender for Clothing Classification #
 
-Since the use of nearest neighbour techniques for recommender systems for similar categorical datasets has been employed in industry for some time, a similar approach using item-based recommendations derived from user selections is chosen to approximate the distance between our rated items and all other items in our data set.
+Since the use of nearest neighbour techniques for recommender systems for similar categorical datasets has been employed in industry for some time, a similar approach using content-based recommendations derived from user selections is chosen to approximate the distance between our rated items and all other items in our data set. Approximate nearest neighbours doesn't compute the distance metric for every item in the set, only those that are statistically probable to be neighbours. This has the added advantage of being extremely fast when compared to other techniques, which for production applications where recommendations are needed in near-realtime is important.
 
 Two algorithms are constructed for the purposes of experimentation. The first is a recommender system with limited dimensionality and feature space we will call the 'basic' algorithm. The second is a recommender which leverages additional features engineered from a bayesian classifier we use to derive a new categorical feature called 'style'. This in conjunction with additional features selected from an ecommerce website makeup the dimensions we will use to construct a more complex algorithm we will call 'advanced'.
 

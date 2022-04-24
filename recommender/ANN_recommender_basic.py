@@ -4,8 +4,6 @@ import matplotlib.pyplot as plt
 from annoy import AnnoyIndex
 from sklearn.preprocessing import LabelBinarizer
 
-import seaborn as sns
-import statsmodels.api as sm
 pd.set_option('display.max_colwidth', -1)
 
 #Import into pandas
@@ -153,9 +151,12 @@ def find_top_recommendations(user_ratings):
 
     vectors = 9
 
+    # Process, consolidate and vectorize our data
     processed_data = process_data(dress_data)
     consolidated_data = consolidate_data(processed_data)
     vectorized_data = hot_encode(consolidated_data)
+
+    # Construct the ANN model from our vectorized data
     build_ANN_index(vectorized_data)
 
     for index, row in survey_responses.iterrows():
@@ -164,7 +165,7 @@ def find_top_recommendations(user_ratings):
         single_user_ratings = user_ratings[user_ratings['UserID'] == user]
         single_user_ratings = single_user_ratings.sort_values('Rating', ascending=False)
 
-        # Get recommendations for the top 5 rated dresses per user
+        # Get recommendations for the top 2 rated dresses per user
         single_user_ratings = single_user_ratings.head(2)
 
         recommendations_index = []
@@ -173,19 +174,25 @@ def find_top_recommendations(user_ratings):
         for rating_index, rating_row in single_user_ratings.iterrows():
             item_index = processed_data[processed_data['Link'] == rating_row['Link'][1:]].index.values.astype(int)
 
+            # Find recommendations for this top rated item
             neighbors = find_neighbours(vectors, int(item_index[0]), 100)
+            
+            # Add eacg recommendation index to our recommendations list for this user (100 recommendations per item)
             for item in neighbors:
                 recommendations_index.append(item)
             
         recommendations = []
 
+        # Now fetch the full row by the index captured above and add to our recommendations list
         for index in recommendations_index:
             recommend_row = processed_data.iloc[index,:]
             recommendations.append(recommend_row)
         
+        # Add the column names back to the pandas dataframe
         recommendations = pd.DataFrame(recommendations, columns = processed_data.columns)
+        
+        # Include the user email address
         user_email = row['UserEmail']
-
         recommendations['User']=user_email
 
         # Drop any duplicate recommendations

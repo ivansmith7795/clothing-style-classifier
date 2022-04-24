@@ -3,8 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.impute import SimpleImputer
 
-import seaborn as sns
-import statsmodels.api as sm
 pd.set_option('display.max_colwidth', -1)
 
 #Import into pandas
@@ -51,12 +49,19 @@ def build_matrix(survey_data):
     for index, row in survey_data.iterrows():
         user_id = row['UserID']
 
+        # Loop 20 times per question since we know each user was asked 20 questions about 20 different dresses
         for i in range(1, 20):
+            
+            # Extract the link for storing in the item matrix (we use the link later on to find and compare items and build our recommendations)
             link = rated_dresses.iloc[[i-1]]['Link'].to_string(header=False, index=False)
            
+            # Build our new rating row, which contains the user id, user email address, link of the rated dress, index number and rating 
             rating = [user_id, row['UserEmail'], link, i, row['Dress '+str(i)+'/20. How likely is it that you would wear this dress?'][:1]]
+            
+            # Apped to the user data list
             user_data.append(rating)
 
+    # Define our columns (as described above)
     columns = ['UserID', 'UserEmail', 'Link', 'DressID', 'Rating']
 
     user_data = pd.DataFrame (user_data, columns = columns)

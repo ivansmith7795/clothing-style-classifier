@@ -11,6 +11,12 @@ To install, simply do ** pip install --user annoy ** to pull down the latest ver
 
 The algorithm allows for the use of Euclidean distance, Manhattan distance, cosine distance, Hamming distance, or Dot (Inner) Product distance. We use cosine distanec for this experiment. We select ANNOY for the speed of predictions with a limited feature space (in this case < 100 features total). For low-dimensionality, approximate nearest neighbours provides the best tradeoff between speed of prediction and accuracy.
 
+ANN works by using random projections and by building up a tree. At every intermediate node in the tree, a random hyperplane is chosen, which divides the space into two subspaces. This hyperplane is chosen by sampling two points from the subset and taking the hyperplane equidistant from them.
+
+We do this k times so that we get a forest of trees. k has to be tuned to your need, by looking at what tradeoff you have between precision and performance.
+
+Hamming distance (contributed by Martin Aumüller) packs the data into 64-bit integers under the hood and uses built-in bit count primitives so it could be quite fast. All splits are axis-aligned.
+
 There are just two main parameters needed to tune Annoy: the number of trees n_trees and the number of nodes to inspect during searching search_k. We use a smaller number of tress as our feature space is limited.
 
 n_trees is provided during build time and affects the build time and the index size. A larger value will give more accurate results, but larger indexes.

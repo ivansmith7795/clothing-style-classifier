@@ -321,7 +321,7 @@ Finally, we construct our find_top_recommendations function. This function appli
 
 Here, we process our data, consolidate it, vectorize it (using one-hot encoding) and build the ANN model. Once done, we loop over every survey response in our item matrix, and extract all ratings for each user to use as the basis for our recommendation. In this case, the top 2 rated items are selected to perform a recommendation. We use a slightly different methodology for the advanced recommender to be described later on.
 
-Each item has 100 recommendations generated (200 in total). These recommendations are then filtered (based on our filter business logic above) and only the top 10 of the remaining recommendations are then selected.
+Each item has 100 recommendations generated (200 in total). These recommendations are then filtered (based on our filter business logic above) and only the top 10 of the remaining recommendations are then selected. The resulting recommendations are then saved to a file on a per-user basis for capturing qualitative feedback on later on:
 
 ```python
 def find_top_recommendations(user_ratings):

@@ -143,6 +143,7 @@ def scrape_image(index, dress_page):
     parsed_image = []
 
     page = None
+    print(dress_page)
     dress_page = dress_page.replace(" ","")
 
     try:
@@ -179,13 +180,13 @@ print(model.summary())
 
 
 #Import into pandas
-labeled_dataset = pd.read_csv('../datasets/dataset_dresses_labeled.csv')
+labeled_dataset = pd.read_csv('../datasets/dress-dataset-labeled-processed.csv')
 predicted_classes = []
 
 for index, row in labeled_dataset.iterrows():
     predicted_class = 'unknown'
-    page_url = row['link']
-    index_id = row['Original order']
+    page_url = row['Link']
+    index_id = row['IndexID']
     image = scrape_image(index_id, page_url)
     
     if len(image) > 0:
@@ -196,7 +197,7 @@ for index, row in labeled_dataset.iterrows():
     predicted_classes.append(predicted_class)
 
 labeled_dataset.insert(0, "cv_predicted", predicted_classes)
-labeled_dataset.to_csv('../datasets/dataset_dresses_labeled_cv.csv', index=False)
+labeled_dataset.to_csv('../datasets/dress-dataset-labeled-processed.csv', index=False)
 
 #Save the dataframe 
 #test_image_url = '1553_classic.jpg'

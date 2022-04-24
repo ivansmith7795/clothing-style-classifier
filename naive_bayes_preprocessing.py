@@ -9,26 +9,26 @@ import statsmodels.api as sm
 analysis_name = "Clothing Type Classifier"
 
 #Import into pandas
-labeled_dataset = pd.read_csv('datasets/dataset_dresses_labeled_cv.csv')
-unlabeled_dataset = pd.read_csv('datasets/dataset_dresses_unlabeled_cv.csv')
+labeled_dataset = pd.read_csv('datasets/dress-dataset-labeled-processed-cv.csv')
+unlabeled_dataset = pd.read_csv('datasets/dress-dataset-unlabeled-processed-cv.csv')
 
 def clean_data(dataset, datatype):
     
     # Clear empty field special characters and replace with blank values
-    dataset = dataset.replace('--', np.NaN, regex=True)
+    #dataset = dataset.replace('--', np.NaN, regex=True)
 
     #Drop unused columns
-    dataset = dataset.drop(columns=['Random order', 'Original order', 'link', 'Sport', 'Sleeve length 1', 'Front material', 'Licensed characters', 'Outer leg length', 'Middle part material', 'Back material', 'Jacket length', 'Top part material', 'Filling', 'Insert material', 'Sleeves material'])
+    dataset = dataset.drop(columns=['IndexID', 'Link'])
 
     #Remove all columns that are all NaN
     dataset = dataset.dropna(how='all', axis=1)
 
     #Remove the price special characters and convert to numeric
-    dataset = dataset.replace(to_replace ='Â£', value = '', regex = True)
-    dataset = dataset.replace(to_replace ='Â', value = '', regex = True)
+    #dataset = dataset.replace(to_replace ='Â£', value = '', regex = True)
+    #dataset = dataset.replace(to_replace ='Â', value = '', regex = True)
 
     #Convert the price column to numeric
-    dataset['price'] = dataset['price'].apply(pd.to_numeric, errors='coerce')
+    dataset['Price'] = dataset['Price'].apply(pd.to_numeric, errors='coerce')
 
     #Get the columns
     datacols = list(dataset.columns)
@@ -44,7 +44,7 @@ def clean_data(dataset, datatype):
         dataset = pd.DataFrame(dataset, columns = datacols)
 
     # Save the unlabeled set to a file
-    dataset.to_csv('datasets/dataset_dresses_' + datatype + '_processed.csv')
+    dataset.to_csv('datasets/dataset-dresses-' + datatype + '-processed-bayes.csv')
 
 
 clean_data(labeled_dataset, 'labeled')

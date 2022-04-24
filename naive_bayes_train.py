@@ -1,12 +1,18 @@
 import h2o
+import pandas as pd
 from h2o.estimators.naive_bayes import H2ONaiveBayesEstimator
 
 #Specify the number of threads the H20 framework will consume
 h2o.init(nthreads = -1, max_mem_size = 8)
 
 #Load the data from the labeled data set
-data_csv = "datasets/dataset_dresses_labeled_processed.csv" 
-data = h2o.import_file(data_csv)
+data_csv = "datasets/dataset-dresses-labeled-processed-bayes.csv"
+labeled_dataset = pd.read_csv(data_csv)
+
+#Drop unused columns
+labeled_dataset = labeled_dataset.drop(columns=['Unnamed: 0'])
+
+data = h2o.H2OFrame(labeled_dataset)
 
 splits = data.split_frame(ratios=[0.8, 0.10], seed=1)  
 
@@ -14,14 +20,15 @@ train = splits[0]
 valid = splits[1]
 test = splits[2]
 
-y = 'Styles'
+y = 'Style'
 x = list(data.columns)
+
 
 #remove the response from our independent variable list along with the link and style options categories
 x.remove(y) 
 
 #Train the model and produce the model file nb_fit1
-nb_fit1 = H2ONaiveBayesEstimator(model_id='nb_fit1', seed=1)
+nb_fit1 = H2ONaiveBayesEstimator(model_id='nb_style_classifier', seed=1)
 nb_fit1.train(x=x, y=y, training_frame=train)
 
 #Produce the performance metrics

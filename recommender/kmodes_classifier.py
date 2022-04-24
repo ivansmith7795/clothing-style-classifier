@@ -14,7 +14,7 @@ from sklearn import preprocessing
 from kmodes.kmodes import KModes
 
 #Load our clean dataset
-dataset = pd.read_csv('datasets/survey_results_processed.csv')
+dataset = pd.read_csv('datasets/survey-responses.csv')
 
 
 #Convert our bool (active) column into a categorical feature
@@ -44,26 +44,26 @@ print(clusterCentroidsDf)
 
 #Finding K cost
 cost = []
-for num_clusters in list(range(1,8)):
+for num_clusters in list(range(1,5)):
     kmode = KModes(n_clusters=num_clusters, init = "Cao", n_init = 1, verbose=1)
     kmode.fit_predict(dataset)
     cost.append(kmode.cost_)
 
 
-y = np.array([i for i in range(1,8,1)])
+y = np.array([i for i in range(1,5,1)])
 plt.plot(y,cost)
 
 plt.savefig('kmodes.png', format="png")
 
-#Looks like K - 3 is the best
-km_cao = KModes(n_clusters=3, init = "Cao", n_init = 1, verbose=1)
+#Looks like K - 2 is the best
+km_cao = KModes(n_clusters=2, init = "Cao", n_init = 1, verbose=1)
 fitClusters_cao = km_cao.fit_predict(dataset)
 
 #Combine cluster labels with the original set
 dataset = dataset_copy.reset_index()
 
 clustersDf = pd.DataFrame(fitClusters_cao)
-clustersDf.columns = ['style_class']
+clustersDf.columns = ['user_class']
 combinedDf = pd.concat([dataset, clustersDf], axis = 1).reset_index()
 combinedDf = combinedDf.drop(['index', 'level_0'], axis = 1)
 
@@ -71,8 +71,8 @@ print(combinedDf.head())
 
 combinedDf.to_csv('datasets/kmodes_labeled_combined.csv')
 #Identify each cluster
-cluster_0 = combinedDf[combinedDf['style_class'] == 0]
-cluster_1 = combinedDf[combinedDf['style_class'] == 1]
+cluster_0 = combinedDf[combinedDf['user_class'] == 0]
+cluster_1 = combinedDf[combinedDf['user_class'] == 1]
 
 print(cluster_0.info())
 print(cluster_1.info())

@@ -32,10 +32,11 @@ def scrape_image(index, dress_page, style_class):
             urllib2.urlretrieve(images[0], "captured/" + str(index) + "_" + str(style_class) + ".jpg")
 
 #Import into pandas
-labeled_dataset = pd.read_csv('../datasets/dataset_dresses_labeled.csv')
+labeled_dataset = pd.read_csv('../datasets/dress-dataset-labeled-processed.csv')
+
 
 for index, row in labeled_dataset.iterrows():
-    page_url = row['link']
-    style_class = row['Styles']
-    index_id = row['Original order']
+    page_url = row['Link']
+    style_class = row['Style']
+    index_id = row['IndexID']
     scrape_image(index_id, page_url, style_class)

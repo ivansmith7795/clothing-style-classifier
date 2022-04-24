@@ -8,7 +8,7 @@ pd.set_option('display.max_colwidth', -1)
 
 #Import into pandas
 user_ratings = pd.read_csv('datasets/user_ratings_matrix.csv')
-dress_data = pd.read_csv('datasets/dress-data-processed.csv')
+dress_data = pd.read_csv('../datasets/dress-dataset-all-processed-nb-predictions.csv')
 survey_responses = pd.read_csv('datasets/survey_results_processed.csv')
 
 
@@ -19,6 +19,10 @@ def process_data (dress_data):
 
     # Clear empty field special characters and replace with blank values
     dress_data = dress_data.replace('--', '', regex=True)
+
+    # Clear empty field special characters and replace with blank values
+    #dress_data = dress_data.replace(np.NaN, 'Unknown', regex=True)
+    dress_data = dress_data.fillna('Unknown')
 
     #Remove the price special characters and convert to numeric
     dress_data = dress_data.replace(to_replace ='Â£', value = '', regex = True)
@@ -161,7 +165,7 @@ def find_top_recommendations(user_ratings):
 
     for index, row in survey_responses.iterrows():
         user = row['UserID']
-
+        print(user)
         single_user_ratings = user_ratings[user_ratings['UserID'] == user]
         single_user_ratings = single_user_ratings.sort_values('Rating', ascending=False)
 

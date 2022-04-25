@@ -63,7 +63,7 @@ import cv2
 
 ```
 
-Next, we apply autotuning to normalize our images and set our randomize seed (arbitrarily selected) and the learning rate.
+Next, we apply autotuning to improve the performance of our data pipeline and set our randomize seed (arbitrarily selected) and the learning rate.
 
 
 ```python

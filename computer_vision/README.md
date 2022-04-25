@@ -504,4 +504,50 @@ The final output of our training is captured in the training loss chart. This he
 ![Scheme](TrainingLoss.png)
 
 
+Progress can be monitored during training using the saved images in the prediction_progress folder:
+
+
+Example of a prediction after a single epoch (poor quality, a lot of confusion):
+
+
+![Scheme](prediction_progress/0_sample_prediction.png)
+
+
+
+Example of a prediction after 80 epochs (near perfect pixel-wise prediction):
+
+
+![Scheme](prediction_progress/79_sample_prediction.png)
+
+
 Once training completes, the saved model can be used for making predictions using new inputs about what style category they belong to.
+
+
+## Predicting Style Class with a Trained CNN ##
+
+Once the model has been trainined, as described in the previous section, it then becomes possible to load the saved model and make predictions about new, previously unseen input images.
+
+The predict_batch.py file contains the scripts needed to make predictions about our unlabeled (does not contain the style class) images.
+
+As with our training script, we first load the libraries need to load the model and process images:
+
+```python
+from glob import glob
+
+import IPython.display as display
+import matplotlib.pyplot as plt
+import numpy as np
+import tensorflow as tf
+import datetime, os
+from tensorflow.keras.layers import *
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+from tensorflow.keras.optimizers import Adam
+
+from tensorflow import keras
+from tensorflow.keras import layers
+
+from IPython.display import clear_output
+from keras_radam import RAdam
+from PIL import Image
+from PIL import ImagePalette
+```

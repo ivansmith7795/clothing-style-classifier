@@ -510,14 +510,14 @@ Progress can be monitored during training using the saved images in the predicti
 Example of a prediction after a single epoch (poor quality, a lot of confusion):
 
 
-![Scheme](prediction_progress/0_sample_prediction.png)
+![Scheme](prediction_progression/0_sample_prediction.png)
 
 
 
 Example of a prediction after 80 epochs (near perfect pixel-wise prediction):
 
 
-![Scheme](prediction_progress/79_sample_prediction.png)
+![Scheme](prediction_progression/79_sample_prediction.png)
 
 
 Once training completes, the saved model can be used for making predictions using new inputs about what style category they belong to.

@@ -4,8 +4,6 @@ import matplotlib.pyplot as plt
 from annoy import AnnoyIndex
 from sklearn.preprocessing import LabelBinarizer
 
-import seaborn as sns
-import statsmodels.api as sm
 pd.set_option('display.max_colwidth', -1)
 
 #Import into pandas
@@ -183,7 +181,7 @@ def find_top_recommendations(user_ratings):
         user = row['UserID']
         
         print(user)
-        
+
         single_user_ratings = user_ratings[user_ratings['UserID'] == user]
         single_user_ratings = single_user_ratings.sort_values('Rating', ascending=False)
 

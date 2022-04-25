@@ -136,7 +136,13 @@ def build_matrix(survey_data):
 
 ## Basic ANN Recommender ##
 
-The script for the basic recommender can be found in the ANN_recommender_basic.py file. Below is an explaination of the code:
+The basic recommender, as mentioned above, leverages an ANN classification system to choose items a given user would be interested in. This is largely a content-based classification system but could easily incorporate similar user preferences to make inferences about item purchases. 
+
+The system makes use of the following features, which mimick the ecommerce standard filter options currently available to users:
+
+'Brand', 'Price', 'Color', 'Outer fabric material', 'Collar', 'Sleeve length', 'Dress length', 'Consolidated Prints', 'Fabric'
+
+The script for the basic recommender can be found in the ANN_recommender_basic.py file. Below is an explaination of the code. 
 
 We import the ANNOY algorithm along with pandas an numpy to manipulate the data. Sklearn LabelBinarizer will be used for one-hot encoding our categorical features (which will be described later on):
 
@@ -390,3 +396,274 @@ def find_top_recommendations(user_ratings):
 ```
 
 That's it! Future work will include potentially adjusting the feature weights and experimenting with alternate distance metrics to futher tune the model.
+
+## Advanced ANN Recommender ##
+
+The second recommender algorithm constructed as part of this experiment is the 'advanced' algorithm. The algorithm is similar to the basic algorithm with a few key differences. The advanced ANN recommender uses a larger set of features to 'predict' user recommendations based on positively rated items.
+
+The algorithm makes use of the following key features (both engineered and scraped from the ecommerce site) for making recommendations:
+
+'Style', 'Dress name', 'Brand', 'Color', 'Outer fabric material', 'Collar', 'Sleeve length', 'Dress length', 'Consolidated Prints', 'Fabric', 'Price', 'Price Category', 'Lining', 'Care instructions', 'Cut', 'Fastening', 'Type of dress', 'Details', 'Consolidated sleeve length', 'Fit', 'Consolidated fit', 'Back width', 'Sheer?', 'Pockets?', 'Rhinestones?', 'Shoulderpads?', 'Backless?'
+
+Importantly, the algorithm incorporates the 'Style' attribute in conjunction with other un-filterable attributes to make recommendations. The style feature is engineered using a Naive Bayes algorithm which predicts the style of a given garmet using similar features to those listed above, and also leverages a instance segmentation routine which downloads the image of each garmet, analysis the pixels and makes a determination as to the 'style' of a given article of clothing. The computer vision prediction along with the categorical and numeric descriptive attributes are what makes this a novel approach to ecommerce-type recommender systems.
+
+Understanding that we are using engineer features to make recommendations, our hypothesis is tested by allowing the end-user to review our recommendations and score each recommendation on a scale from 1 through 10 where 10 is 'most likely to buy' and one is 'least likely to buy'. We use the scale to gauge and continuously improve the system during retraining while historical data is gathered (i.e. additional purchases and ratings).
+
+The code for the advanced recommender can be found in the ANN_recommender_advanced.py script:
+
+First, we import the required python libraries including pandas, numpy the ANNOY algorithm and LabelBinarizer from Sklearn for one-hot encoding our categorical features:
+
+```python
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from annoy import AnnoyIndex
+from sklearn.preprocessing import LabelBinarizer
+```
+
+
+Next, we import our datasets from relavent sources. Note we using the Naive Bayes (nb) output which includes the style classifications for the complete dataset:
+
+```python
+#Import into pandas
+user_ratings = pd.read_csv('datasets/user_ratings_matrix.csv')
+dress_data = pd.read_csv('../datasets/dress-dataset-all-processed-nb-predictions.csv')
+survey_responses = pd.read_csv('datasets/survey_results_processed.csv')
+```
+
+As with the basic recommender, we perform some preprocessing to remove noisey data:
+
+```python
+def process_data (dress_data):
+
+
+    # Clear empty field special characters and replace with blank values
+    dress_data = dress_data.replace('--', '', regex=True)
+
+    # Replace NaN values with 'Unknown'
+    dress_data = dress_data.fillna('Unknown')
+
+    #Remove the price special characters and convert to numeric
+    dress_data = dress_data.replace(to_replace ='Â£', value = '', regex = True)
+    dress_data = dress_data.replace(to_replace ='Â', value = '', regex = True)
+
+    #Convert the price column to numeric
+    dress_data['Price'] = dress_data['Price'].apply(pd.to_numeric, errors='coerce')
+    dress_data['Price Category'] = dress_data['Price Category'].apply(pd.to_numeric, errors='coerce')
+
+    return dress_data
+```
+
+Additionally, we consolidate our data to include 27 vectors, including style for our ANN algorithm to build a recommendation:
+
+```python
+def consolidate_data(combine_data):
+
+    consolidated_data = combine_data.copy()
+
+    #Include our advanced features
+    consolidated_data = consolidated_data[['Style', 'Dress name', 'Brand', 'Color', 'Outer fabric material', 'Collar', 'Sleeve length', 'Dress length', 'Consolidated Prints', 'Fabric', 'Price', 'Price Category', 'Lining', 'Care instructions', 'Cut', 'Fastening', 'Type of dress', 'Details', 'Consolidated sleeve length', 'Fit', 'Consolidated fit', 'Back width', 'Sheer?', 'Pockets?', 'Rhinestones?', 'Shoulderpads?', 'Backless?']]
+
+    #Remove all columns that are all NaN
+    consolidated_data = consolidated_data.dropna(how='all', axis=1)
+
+    return consolidated_data
+```
+
+We also hot-encode our categorical features as ANN requires a numeric feature space to measure ecludian (or cosine) distance:
+
+```python
+def hot_encode(dataset):
+
+    encoded = dataset.copy()
+
+    # One hot encode all our categorical data to nunmeric representations
+    encoded['Style'] = LabelBinarizer().fit_transform(dataset['Style'])
+    encoded['Dress name'] = LabelBinarizer().fit_transform(dataset['Dress name'])
+    encoded['Brand'] = LabelBinarizer().fit_transform(dataset['Brand'])
+    encoded['Color'] = LabelBinarizer().fit_transform(dataset['Color'])
+    encoded['Outer fabric material'] = LabelBinarizer().fit_transform(dataset['Outer fabric material'])
+    encoded['Collar'] = LabelBinarizer().fit_transform(dataset['Collar'])
+    encoded['Sleeve length'] = LabelBinarizer().fit_transform(dataset['Sleeve length'])
+    encoded['Dress length'] = LabelBinarizer().fit_transform(dataset['Dress length'])
+    encoded['Consolidated Prints'] = LabelBinarizer().fit_transform(dataset['Consolidated Prints'])
+    encoded['Fabric'] = LabelBinarizer().fit_transform(dataset['Fabric'])
+    encoded['Price'] = dataset['Price']
+    encoded['Price Category'] = dataset['Price Category']
+    encoded['Lining'] = LabelBinarizer().fit_transform(dataset['Lining'])
+    encoded['Care instructions'] = LabelBinarizer().fit_transform(dataset['Care instructions'])
+    encoded['Cut'] = LabelBinarizer().fit_transform(dataset['Cut'])
+    encoded['Fastening'] = LabelBinarizer().fit_transform(dataset['Fastening'])
+    encoded['Type of dress'] = LabelBinarizer().fit_transform(dataset['Type of dress'])
+    encoded['Details'] = LabelBinarizer().fit_transform(dataset['Details'])
+    encoded['Consolidated sleeve length'] = LabelBinarizer().fit_transform(dataset['Consolidated sleeve length'])
+    encoded['Fit'] = LabelBinarizer().fit_transform(dataset['Fit'])
+    encoded['Consolidated fit'] = LabelBinarizer().fit_transform(dataset['Consolidated fit'])
+    encoded['Back width'] = LabelBinarizer().fit_transform(dataset['Back width'])
+    encoded['Sheer?'] = LabelBinarizer().fit_transform(dataset['Sheer?'])
+    encoded['Pockets?'] = LabelBinarizer().fit_transform(dataset['Pockets?'])
+    encoded['Rhinestones?'] = LabelBinarizer().fit_transform(dataset['Rhinestones?'])
+    encoded['Shoulderpads?'] = LabelBinarizer().fit_transform(dataset['Shoulderpads?'])
+    encoded['Backless?'] = LabelBinarizer().fit_transform(dataset['Backless?'])
+```
+
+We then build our ANN model. Note this is actually a feature map, not a set of weights and parameters to build a function representing the dataset as one would expect with most abstraction models. This is because KNN is inherently a 'lazy learning' method where the entire dataset is loaded into memory to make predictions directly. Also note our vector space is set to 27 to reflect the number of features we use:
+
+```python
+def build_ANN_index(dataset):
+
+    vectors = 27
+
+    ann_index = AnnoyIndex(vectors, 'angular')
+    for index, row in dataset.iterrows():
+        ann_index.add_item(index, row.tolist())
+
+    ann_index.build(10)
+    ann_index.save('models/advanced.ann')
+```
+
+Our find_neighbours function is constructed to predict nearest neighbours:
+
+```python
+def find_neighbours(vectors, item_index, max_neighbours):
+    
+    model = AnnoyIndex(vectors, 'angular')
+    model.load('models/advanced.ann')
+    neighbours = model.get_nns_by_item(item_index, max_neighbours)
+
+    return neighbours
+```
+
+As with the basic recommender, we also filter out items from our recommendations list our users have explicitly indicated they are not interested in:
+
+```python
+def filter_preferences(dataset, user_id):
+
+    #Drop the options where the user has specified a preference
+    user_preferences = survey_responses[survey_responses['UserID'] == user_id]
+    user_colors = user_preferences['Out of the following color options, which would you be least likely to wear? Limit your choices to max. 10 options.']
+    user_prints = user_preferences['Out of the following prints, which would you be least likely to wear? There is no choice limitation.']
+    user_necklines = user_preferences['Out of the following necklines, which would you be least likely to wear? There is no choice limitation.']
+    user_collars = user_preferences['Out of the following collars, which would you be least likely to wear? There is no choice limitation.']
+    user_materials = user_preferences['Out of the following materials, which would you be least likely to wear? There is no choice limitation.']
+    user_dress_type = user_preferences['Out of the following dress types, which would you be least likely to wear? There is no choice limitation.']
+
+    # Remove the disliked colors
+    user_colors = user_colors.str.split(',', expand=True)
+
+    for index, color in user_colors.iteritems():
+        color = str(color.values[0]).lower()
+        matched_dresses = dataset.loc[dataset['Color'] == color]
+        dataset = dataset[~dataset.isin(matched_dresses)].dropna()
+
+
+    # Remove the disliked prints
+    user_prints = user_prints.str.split(',', expand=True)
+
+    for index, prints in user_prints.iteritems():
+        prints = str(prints.values[0])
+        matched_dresses = dataset.loc[dataset['Consolidated Prints'] == prints]
+        dataset = dataset[~dataset.isin(matched_dresses)].dropna()
+
+
+    # Remove the disliked necklines
+    user_necklines = user_necklines.str.split(',', expand=True)
+
+    for index, neckline in user_necklines.iteritems():
+        neckline = str(neckline.values[0])
+        matched_dresses = dataset.loc[dataset['Neckline'] == neckline]
+        dataset = dataset[~dataset.isin(matched_dresses)].dropna()
+
+    # Remove the disliked collars
+    user_collars = user_collars.str.split(',', expand=True)
+
+    for index, collar in user_collars.iteritems():
+        collar = str(collar.values[0]).lower()
+        matched_dresses = dataset.loc[dataset['Collar'] == collar]
+        dataset = dataset[~dataset.isin(matched_dresses)].dropna()
+
+    # Remove the disliked fabric
+    user_materials = user_materials.str.split(',', expand=True)
+
+    for index, fabric in user_materials.iteritems():
+        fabric = str(fabric.values[0])
+        matched_dresses = dataset.loc[dataset['Fabric'] == fabric]
+        dataset = dataset[~dataset.isin(matched_dresses)].dropna()
+
+
+    # Remove the disliked dress types
+    user_dress_type = user_dress_type.str.split(',', expand=True)
+
+    for index, dress in user_dress_type.iteritems():
+        dress = str(dress.values[0])
+        matched_dresses = dataset.loc[dataset['Type of dress'] == dress]
+        dataset = dataset[~dataset.isin(matched_dresses)].dropna()
+    
+    dataset = dataset.reset_index(drop=True)
+
+    return dataset
+
+```
+
+Finally, we perform the steps necessary to make predictions. Data is cleaned, consolidated and encoded. The model is then constructed and the top user ratings are selected to build recommendations.
+
+Note, the only difference from this recommender and the basic recommender are the number of features we include in the system (27 vs 9).
+
+Once recommendations are build (100 identified items for each of the top 2 rated items) will filter out those our user has noted are undesired (based on color selection, print pattern etc) and the remaining top 10 are used to build our item recommendations and saved to a file for review and feedback.
+
+
+```python
+def find_top_recommendations(user_ratings):
+
+    vectors = 27
+
+    processed_data = process_data(dress_data)
+    consolidated_data = consolidate_data(processed_data)
+    vectorized_data = hot_encode(consolidated_data)
+    build_ANN_index(vectorized_data)
+
+    for index, row in survey_responses.iterrows():
+        user = row['UserID']
+        
+        print(user)
+
+        single_user_ratings = user_ratings[user_ratings['UserID'] == user]
+        single_user_ratings = single_user_ratings.sort_values('Rating', ascending=False)
+
+        # Get recommendations for the top 2 rated dresses per user
+        single_user_ratings = single_user_ratings.head(2)
+
+        recommendations_index = []
+
+        # Get nearest items for the top rated dresses
+        for rating_index, rating_row in single_user_ratings.iterrows():
+            item_index = processed_data[processed_data['Link'] == rating_row['Link'][1:]].index.values.astype(int)
+
+            neighbors = find_neighbours(vectors, int(item_index[0]), 100)
+            print(rating_row['Rating'])
+            for item in neighbors:
+                recommendations_index.append(item)
+            
+        recommendations = []
+
+        for index in recommendations_index:
+            recommend_row = processed_data.iloc[index,:]
+            recommendations.append(recommend_row)
+        
+        recommendations = pd.DataFrame(recommendations, columns = processed_data.columns)
+        user_email = row['UserEmail']
+
+        recommendations['User']=user_email
+
+        # Drop any duplicate recommendations
+        recommendations = recommendations.drop_duplicates()
+
+        # Filter our recommendations
+        recommendations = filter_preferences(recommendations, user)
+
+        # Save the top 10 user recommendations to a file
+        recommendations.head(10).to_csv('results/advanced_features/'+ str(user) +'_' + user_email + '_recommendations.csv')
+
+```
+
+This concludes the item recommender documentation.

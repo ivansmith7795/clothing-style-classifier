@@ -8,6 +8,11 @@ We use a series of 971 images split into a training (80%) validation (10%) and t
 
 A deep neural network system, specifically a convultional neural network (CNN) is used for building the feature maps and computing the weights and biases used to infer our pixel-wise classification and eventual categorization of the images:
 
-Sample image scrapped:
-![Scheme](original_images/3_classic.jpg)
+Example of a scrapped image:
 
+![Scheme](original_images/4011_alternative.jpg)
+
+
+Example of a generated mask:
+
+![Scheme](masks/4011_alternative.png)
